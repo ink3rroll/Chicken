@@ -161,3 +161,17 @@ class Buyer:
         for i in self.__transactions:
             i.printTransactionDetails()
 
+class Transaction:
+    TransactionNum = 0
+    def __init__(self, product, buyer, productQuantity):
+        self.TransactionID = Transaction.TransactionNum
+        self.product = product
+        self.buyer = buyer
+        self.productQuantity = productQuantity
+        Transaction.TransactionNum += 1
+    
+    def printTransactionDetails(self):
+        print(self.TransactionID, " | ", self.product.name, " | Quantity: ", self.productQuantity, " | ", "S: ", self.product.seller.name, "| B: ", self.buyer.name, " |")
+
+
+
