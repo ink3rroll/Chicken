@@ -80,3 +80,84 @@ class Seller:
         money = float(input("Deposit amount: "))
         self.__profits = money
 
+class Buyer:
+    numBuyers = 0
+    def __init__(self, name):
+        self.name = name
+        self.__password = None
+        self.__BuyerID = f"#B{Buyer.numBuyers}"
+        self.__credits = 0
+        self.__cart = {}
+        self.__transactions = []
+        Buyer.numBuyers += 1
+    
+    def setPassword(self, password):
+        self.__password = password
+    
+    def getPassword(self):
+        return self.__password
+    
+    def getCredits(self):
+        return self.__credits
+    
+    def addToCart(self, product):
+        quant = int(input("Quantity: "))
+        while product.stockQuantity < quant:
+            print("Insufficient stocks.")
+            quant = int(input("Quantity: "))
+        self.__cart[product] = quant
+    
+    def removeFromCart(self):
+        if len(self.__cart) == 0:
+            print("Cart is empty.")
+            return
+        for i in self.__cart:
+            print(i.name, " | Quantity: ", self.__cart[i])
+        productName = input("Remove product: ")
+        for i in self.__cart:
+            if productName == i.name:
+                self.__cart[i] = 0
+    
+    def emptyCart(self):
+        self.__cart = []
+    
+    def printCart(self):
+        if len(self.__cart) == 0:
+            print("Cart is empty.")
+            return
+        for i in self.__cart:
+            print(i.name, " - ", i.price, " | Quantity: ", self.__cart[i])
+    
+    def Deposit(self):
+        money = float(input("Deposit amount: "))
+        self.__credits += money
+    
+    def checkOut(self):
+        total = 0
+        for i in self.__cart:
+            total += (i.price * self.__cart[i])
+        
+        if total > self.__credits:
+            print("Insufficient credit.")
+            return
+        
+        self.__credits -= total
+        
+        print("Successfully bought: ")
+        self.printCart()
+        print("Total: Php", total)
+
+        for i in self.__cart:
+            i.stockQuantity -= self.__cart[i]
+            i.seller.addProfit(i.price * self.__cart[i])
+            record = Transaction(i, self, self.__cart[i])
+            self.__transactions.append(record)
+            print(f"Bought {i.name}")
+        self.emptyCart()
+    
+    def viewTransactions(self):
+        if len(self.__transactions) == 0:
+            print("No transaction records.")
+        for i in self.__transactions:
+            i.printTransactionDetails()
+
